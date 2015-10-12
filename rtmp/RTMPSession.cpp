@@ -59,9 +59,10 @@ namespace videocore
     , m_previousTs(0)
     , m_clearing(false)
     {
-        m_previousChunk.msg_length.data = 0;
-        m_previousChunk.msg_stream_id = 0;
-        m_previousChunk.msg_type_id = 0;
+        m_previousReceivedChunk.msg_length.data = 0;
+        m_previousReceivedChunk.msg_stream_id = 0;
+        m_previousReceivedChunk.msg_type_id = 0;
+        m_previousReceivedDelta = 0;
 #ifdef __APPLE__
         m_streamSession.reset(new Apple::StreamSession());
         m_networkWaitSemaphore = dispatch_semaphore_create(0);
@@ -203,7 +204,7 @@ namespace videocore
         });
     }
     void
-    RTMPSession::sendPacket(uint8_t* data, size_t size, RTMPChunk_0 metadata)
+    RTMPSession::sendPacket(uint8_t* data, size_t size, const RTMPChunk_0 &metadata)
     {
         RTMPMetadata_t md(0.);
         
@@ -263,6 +264,7 @@ namespace videocore
     {
         bool stop1 = false;
         bool stop2 = false;
+        // loop until no bytes in SOCKET
         while ((m_streamSession->status() & kStreamStatusReadBufferHasBytes) && !stop2) {
             size_t maxlen = m_streamInBuffer->availableSpace();
             if (maxlen > 0) {
@@ -278,8 +280,10 @@ namespace videocore
             }
             else {
                 DLogDebug("Stream in buffer full\n");
+                // don't return here, try parse message, it may consume and free the buffer.
             }
             
+            // loop until no complete message anymore
             while(m_streamInBuffer->availableBytes() > 0 && !stop1) {
                 switch(m_state) {
                     case kClientStateHandshake1s0:
@@ -332,7 +336,6 @@ namespace videocore
                     default:
                     {
                         if(!parseCurrentData()) {
-                            m_streamInBuffer->dumpInfo();
                             stop1 = true;
                         }
                     }
@@ -340,6 +343,147 @@ namespace videocore
             }
         };
     }
+    
+    // Parse only one message every time, loop in the caller
+    // If data not enough for one message, return false, else return true;
+    bool
+    RTMPSession::parseCurrentData()
+    {
+        DLogVerbose("Steam in buffer size:%zd\n", m_streamInBuffer->availableBytes());
+//        Logger::dumpBuffer("parseCurrentData", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
+        if (m_streamInBuffer->availableBytes() <= 0) {
+            DLogDebug("No data in buffer\n");
+            return false;
+        }
+        
+        uint8_t first_byte;
+        // at least one byte in current buffer.
+        memcpy(&first_byte, m_streamInBuffer->readBuffer(), 1);
+        int header_type = (first_byte & 0xC0) >> 6;
+        
+        DLogVerbose("First byte:0x%X, header type:%d\n", (int)first_byte, header_type);
+        
+        switch (header_type) {
+            case RTMP_HEADER_TYPE_FULL:
+            {
+                RTMPChunk_0 chunk;
+                if (m_streamInBuffer->availableBytes() >= 1+sizeof(RTMPChunk_0)) {
+                    memcpy(&chunk, m_streamInBuffer->readBuffer()+1, sizeof(RTMPChunk_0));
+                    chunk.msg_length.data = get_be24((uint8_t*)&chunk.msg_length);
+                    chunk.timestamp.data = get_be24((uint8_t*)&chunk.timestamp);
+                    
+                    m_previousReceivedChunk = chunk;
+                    return parseMessage(m_previousReceivedChunk, 1 + sizeof(RTMPChunk_0));
+                }
+                else {
+                    DLogDebug("RTMPChunk_0 not enough a header\n");
+                    m_streamInBuffer->ensureCapacityForWrite(1 + sizeof(RTMPChunk_0));
+                    return false;
+                }
+            }
+                break;
+                
+            case RTMP_HEADER_TYPE_NO_MSG_STREAM_ID:
+            {
+                RTMPChunk_1 chunk;
+                if (m_streamInBuffer->availableBytes() >= 1 + sizeof(RTMPChunk_1)) {
+                    memcpy(&chunk, m_streamInBuffer->readBuffer()+1, sizeof(RTMPChunk_1));
+                    chunk.msg_length.data = get_be24((uint8_t*)&chunk.msg_length);
+                    chunk.delta.data = get_be24((uint8_t*)&chunk.delta);
+                    
+                    m_previousReceivedChunk.msg_length = chunk.msg_length;
+                    m_previousReceivedChunk.msg_type_id = chunk.msg_type_id;
+                    m_previousReceivedChunk.timestamp.data += chunk.delta.data;
+                    m_previousReceivedDelta = chunk.delta.data;
+                    return parseMessage(m_previousReceivedChunk, 1 + sizeof(RTMPChunk_1));
+                }
+                else {
+                    DLogDebug("RTMPChunk_1 not enough a header\n");
+                    m_streamInBuffer->ensureCapacityForWrite(1 + sizeof(RTMPChunk_1));
+                    return false;
+                }
+            }
+                break;
+                
+            case RTMP_HEADER_TYPE_TIMESTAMP:
+            {
+                RTMPChunk_2 chunk;
+                if (m_streamInBuffer->availableBytes() >= 1 + sizeof(RTMPChunk_2)) {
+                    memcpy(&chunk, m_streamInBuffer->readBuffer()+1, sizeof(RTMPChunk_2));
+                    chunk.delta.data = get_be24((uint8_t*)&chunk.delta);
+                    m_previousReceivedChunk.timestamp.data += chunk.delta.data;
+                    m_previousReceivedDelta = chunk.delta.data;
+                    return parseMessage(m_previousReceivedChunk, 1 + sizeof(RTMPChunk_2));
+                }
+                else {
+                    DLogDebug("RTMPChunk_1 not enough a header\n");
+                    m_streamInBuffer->ensureCapacityForWrite(1+sizeof(RTMPChunk_2));
+                    return false;
+                }
+                
+            }
+                break;
+            case RTMP_HEADER_TYPE_ONLY:
+            {
+                m_previousReceivedChunk.timestamp.data += m_previousReceivedDelta;
+                return parseMessage(m_previousReceivedChunk, 1);
+            }
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+    
+    bool
+    RTMPSession::parseMessage(const RTMPChunk_0 &messageChunk, int offset){
+        int length = messageChunk.msg_length.data;
+        if (length < 0) {
+            DLogError("Invalid header length\n");
+            Logger::dumpBuffer("RTMPChunk_0 ERROR", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
+            // FIXME: Clear the stream in buffer ?
+            return false;
+        }
+        if(length > 65535) {
+            DLogDebug("Length soooo large???:%d\n", messageChunk.msg_length.data);
+        }
+        
+        int full_length = length;
+        if (length > m_inChunkSize) {
+            // multiple chunk
+            int remain = length;
+            while (remain > m_inChunkSize) {
+                remain -= m_inChunkSize;
+                full_length++; // addn the chunk seperator 0xC?(0xC3 specially) count.
+            }
+        }
+        
+        if (m_streamInBuffer->availableBytes() >= offset + full_length) {
+            int msg_offset = 0;             // where write to msg
+            int buf_offset = offset;        // where read from m_streamInBuffer
+            int remain = length;
+            std::vector<uint8_t> msg(length);
+            uint8_t *msgp = &msg[0];
+            while (remain > m_inChunkSize) {
+                memcpy(msgp + msg_offset, m_streamInBuffer->readBuffer() + buf_offset, m_inChunkSize);
+                msg_offset += m_inChunkSize;
+                buf_offset += m_inChunkSize+1;
+                remain -= m_inChunkSize;
+            }
+            if (remain > 0) {
+                memcpy(msgp + msg_offset, m_streamInBuffer->readBuffer() + buf_offset, remain);
+            }
+            m_streamInBuffer->didRead(offset + full_length);
+            handleMessage(msgp, messageChunk);
+            return true;
+        }
+        else {
+            DLogDebug("Not enough message data in stream buffer\n");
+            m_streamInBuffer->ensureCapacityForWrite(offset + full_length);
+            return false;
+        }
+    }
+
     void
     RTMPSession::setClientState(ClientState_t state)
     {
@@ -717,21 +861,24 @@ namespace videocore
             
             write(&buff[0], buff.size());
         });
-    }    bool
-    RTMPSession::handleMessage(uint8_t *p, uint8_t msgTypeId)
+    }
+    
+    bool
+    RTMPSession::handleMessage(uint8_t *msgData, const RTMPChunk_0 &header)
     {
         bool ret = true;
+        int msgTypeId = header.msg_type_id;
         DLogDebug("Handle message:%d\n", (int)msgTypeId);
         switch(msgTypeId) {
             case RTMP_PT_BYTES_READ:
             {
-                //DLog("received bytes read: %d\n", get_be32(p));
+                DLog("Received bytes read: %d\n", get_be32(msgData));
             }
                 break;
                 
             case RTMP_PT_CHUNK_SIZE:
             {
-                unsigned long newChunkSize = get_be32(p);
+                unsigned long newChunkSize = get_be32(msgData);
                 DLog("Request to change incoming chunk size from %zu -> %zu\n", m_inChunkSize, newChunkSize);
                 m_inChunkSize = newChunkSize;
             }
@@ -746,20 +893,20 @@ namespace videocore
                 
             case RTMP_PT_SERVER_WINDOW:
             {
-                DLog("Received server window size: %d\n", get_be32(p));
+                DLog("Received server window size: %d\n", get_be32(msgData));
             }
                 break;
                 
             case RTMP_PT_PEER_BW:
             {
-                DLog("Received peer bandwidth limit: %d type: %d\n", get_be32(p), p[4]);
+                DLog("Received peer bandwidth limit: %d type: %d\n", get_be32(msgData), msgData[4]);
             }
                 break;
                 
             case RTMP_PT_INVOKE:
             {
                 DLog("Received invoke\n");
-                handleInvoke(p);
+                handleInvoke(msgData);
             }
                 break;
             case RTMP_PT_VIDEO:
@@ -794,184 +941,6 @@ namespace videocore
                 break;
         }
         return ret;
-    }
-    
-    int  RTMPSession::tryReadOneMessage(uint8_t *msg, int msgsize, int from_offset){
-        int full_msg_length = msgsize;
-        if (msgsize > m_inChunkSize) {
-            // multiple chunk
-            int remain = msgsize;
-            while (remain > m_inChunkSize) {
-                remain -= m_inChunkSize;
-                full_msg_length++; // addn the chunk seperator 0xC?(0xC3 specially) count.
-            }
-        }
-        
-        // because we do not confirm the header length, so check with header length.
-        if (m_streamInBuffer->availableBytes() >= from_offset + full_msg_length) {
-            int msg_offset = 0;             // where to write
-            int buf_offset = from_offset;   // where read for write
-            int remain = msgsize;
-            while (remain > m_inChunkSize) {
-                memcpy(msg+msg_offset, m_streamInBuffer->readBuffer()+buf_offset, m_inChunkSize);
-                msg_offset += m_inChunkSize;
-                buf_offset += m_inChunkSize+1;
-                remain -= m_inChunkSize;
-            }
-            if (remain > 0) {
-                memcpy(msg+msg_offset, m_streamInBuffer->readBuffer()+buf_offset, remain);
-            }
-            
-            return full_msg_length;
-        }
-        return -1;
-    }
-    
-    // Parse only one message every time, loop in the caller
-    // If data not enough for one message, return false, else return true;
-    bool
-    RTMPSession::parseCurrentData()
-    {
-        //        Logger::dumpBuffer("dataReceived", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
-        DLogVerbose("Steam in buffer size:%zd\n", m_streamInBuffer->availableBytes());
-        if (m_streamInBuffer->availableBytes() <= 0) {
-            DLogDebug("No data in buffer\n");
-            return false;
-        }
-        
-        uint8_t first_byte;
-        // at least one byte in current buffer.
-        memcpy(&first_byte, m_streamInBuffer->readBuffer(), 1);
-        int header_type = (first_byte & 0xC0) >> 6;
-        DLogVerbose("First byte:0x%X, header type:%d\n", (int)first_byte, header_type);
-        // TODO: remove the duplicate code
-        switch(header_type) {
-            case RTMP_HEADER_TYPE_FULL:
-            {
-                RTMPChunk_0 chunk;
-                // at least a full header bytes in current buffer
-                if (m_streamInBuffer->availableBytes() >= 1+sizeof(RTMPChunk_0)) {
-                    memcpy(&chunk, m_streamInBuffer->readBuffer()+1, sizeof(RTMPChunk_0));
-                    chunk.msg_length.data = get_be24((uint8_t*)&chunk.msg_length);
-                    if (chunk.msg_length.data < 0) {
-                        DLogDebug("ERROR: Invalid header length\n");
-                        Logger::dumpBuffer("RTMPChunk_0 ERROR", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
-                        // FIXME: Clear the stream in buffer ?
-                        return false;
-                    }
-                    if(chunk.msg_length.data > 65535) {
-                        DLogDebug("Length too large ???:%d\n", chunk.msg_length.data);
-                    }
-                    std::vector<uint8_t> msg(chunk.msg_length.data);
-                    int  full_msgsize = tryReadOneMessage(&msg[0], chunk.msg_length.data, 1+sizeof(RTMPChunk_0));
-                    if (full_msgsize > 0) {
-                        m_streamInBuffer->didRead(1+sizeof(RTMPChunk_0) + full_msgsize);
-                        
-                        handleMessage(&msg[0], chunk.msg_type_id);
-                        m_previousChunk = chunk;
-                        return true;
-                    }
-                    else {
-                        DLogDebug("Not enough one message in buffer\n");
-                        return false;
-                    }
-                }
-                else {
-                    DLogDebug("Not enough a header\n");
-                    // DEBUG only
-                    Logger::dumpBuffer("RTMPChunk_0", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
-                    return false;
-                }
-            }
-                break;
-                
-            case RTMP_HEADER_TYPE_NO_MSG_STREAM_ID:
-            {
-                RTMPChunk_1 chunk;
-                if (m_streamInBuffer->availableBytes() >= 1+sizeof(RTMPChunk_1)) {
-                    memcpy(&chunk, m_streamInBuffer->readBuffer()+1, sizeof(RTMPChunk_1));
-                    chunk.msg_length.data = get_be24((uint8_t*)&chunk.msg_length);
-                    
-                    if (chunk.msg_length.data < 0) {
-                        DLogDebug("ERROR: Invalid header length");
-                        Logger::dumpBuffer("RTMPChunk_1 ERROR", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
-                        // FIXME: Clear the stream in buffer ?
-                        return false;
-                    }
-                    
-                    if(chunk.msg_length.data > 65535) {
-                        DLogDebug("Length too large ???:%d\n", chunk.msg_length.data);
-                    }
-                    
-                    std::vector<uint8_t> msg(chunk.msg_length.data);
-                    int full_msgsize = tryReadOneMessage(&msg[0], chunk.msg_length.data, 1+sizeof(RTMPChunk_1));
-                    if (full_msgsize > 0) {
-                        m_streamInBuffer->didRead(1+sizeof(RTMPChunk_1) + full_msgsize);
-                        
-                        handleMessage(&msg[0], chunk.msg_type_id);
-                        
-                        m_previousChunk.msg_type_id = chunk.msg_type_id;
-                        m_previousChunk.msg_length = chunk.msg_length;
-                        return true;
-                    }
-                    else {
-                        DLogDebug("Not enough one message in buffer\n");
-                        return false;
-                    }
-                }
-                else {
-                    DLogDebug("Not enough a header\n");
-                    // DEBUG only
-                    Logger::dumpBuffer("RTMPChunk_1", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
-                    return false;
-                }
-            }
-                break;
-                
-            case RTMP_HEADER_TYPE_TIMESTAMP:
-            {
-                DLogDebug("Previous chunk length:%d, msgid:%d, streamid:%d\n", m_previousChunk.msg_length.data, m_previousChunk.msg_type_id, m_previousChunk.msg_stream_id);
-                RTMPChunk_2 chunk;
-                if (m_streamInBuffer->availableBytes() >= 1+sizeof(RTMPChunk_2)) {
-                    memcpy(&chunk, m_streamInBuffer->readBuffer()+1, sizeof(RTMPChunk_2));
-                    std::vector<uint8_t> msg(m_previousChunk.msg_length.data);
-                    int full_msgsize = tryReadOneMessage(&msg[0], m_previousChunk.msg_length.data, 1+sizeof(RTMPChunk_2));
-                    if (full_msgsize > 0) {
-                        m_streamInBuffer->didRead(1+sizeof(RTMPChunk_2) + full_msgsize);
-                        handleMessage(&msg[0], m_previousChunk.msg_type_id);
-                        return true;
-                    }
-                    else {
-                        DLogDebug("Not enough one message in buffer\n");
-                        return false;
-                    }
-                }
-                else {
-                    DLogDebug("Not enough a header\n");
-                    // DEBUG only
-                    Logger::dumpBuffer("RTMPChunk_2", m_streamInBuffer->readBuffer(), m_streamInBuffer->availableBytes());
-                    return false;
-                }
-            }
-                break;
-                
-            case RTMP_HEADER_TYPE_ONLY:
-            {
-                // FIXME: like RTMP_HEADER_TYPE_TIMESTAMP
-                m_streamInBuffer->didRead(1);
-                return true;
-            }
-                break;
-                
-            default:
-                DLogError("Invalid header type:%d\n", header_type);
-                // FIXME: Maybe we shoult close the connection and reopen it
-                m_networkQueue.enqueue([=]{
-                    connectServer();
-                });
-                return false;
-        }
-        return false;
     }
     
     void

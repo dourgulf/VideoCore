@@ -46,7 +46,6 @@ typedef enum {
     kClientStateNotConnected    =11
 } ClientState_t;
 
-
 #pragma pack(push, 1)
 
 typedef struct {
@@ -54,14 +53,13 @@ typedef struct {
 } int24_t;
 
 typedef struct {
-    
     int24_t timestamp;
     int24_t msg_length;
     int8_t msg_type_id;
-    int msg_stream_id;
-    
+    int msg_stream_id;    
 } RTMPChunk_0;
 #define RTMP_CHUNK_TYPE_0 0x0
+
 typedef struct {
     int24_t delta;
     int24_t msg_length;
@@ -72,6 +70,7 @@ typedef struct {
 typedef struct {
     int24_t delta;
 } RTMPChunk_2;
+
 #define RTMP_CHUNK_TYPE_2 0x80
 
 #define RTMP_CHUNK_TYPE_3 0xC0

@@ -92,13 +92,16 @@ namespace videocore
     private:
         
         // Deprecate sendPacket
-        void sendPacket(uint8_t* data, size_t size, RTMPChunk_0 metadata);
+        void sendPacket(uint8_t* data, size_t size, const RTMPChunk_0 &metadata);
         
         
         
         void streamStatusChanged(StreamStatus_T status);
         void write(uint8_t* data, size_t size, std::chrono::steady_clock::time_point packetTime = std::chrono::steady_clock::now(), bool isKeyframe = false);
         void dataReceived();
+        bool parseCurrentData();
+        bool parseMessage(const RTMPChunk_0 &messageChunk, int offset);
+        
         void setClientState(ClientState_t state);
         void handshake();
         void handshake0();
@@ -117,12 +120,8 @@ namespace videocore
         void sendSetBufferTime(int milliseconds);
         
         void increaseBuffer(int64_t size);
-        int  reassembleBuffer(uint8_t *p, int msgSize, int packageSize);
-        int  tryReadOneMessage(uint8_t *msg, int msgsize, int from_offset);
-
-        bool parseCurrentData();
         void handleInvoke(uint8_t* p);
-        bool handleMessage(uint8_t* p, uint8_t msgTypeId);
+        bool handleMessage(uint8_t *msgData, const RTMPChunk_0 &header);
         
         std::string parseStatusCode(uint8_t *p);
         int32_t amfPrimitiveObjectSize(uint8_t* p);
@@ -145,12 +144,12 @@ namespace videocore
         TCPThroughputAdaptation m_throughputSession;
         
         uint64_t            m_previousTs;
-        RTMPChunk_0         m_previousChunk;
         
         std::deque<BufStruct> m_streamOutQueue;
         
         std::map<int, uint64_t>             m_previousChunkData;
-//        std::unique_ptr<RingBuffer>         m_streamInBuffer;
+        RTMPChunk_0                         m_previousReceivedChunk;
+        int                                 m_previousReceivedDelta;
         std::unique_ptr<PreallocBuffer>     m_streamInBuffer;
         std::unique_ptr<IStreamSession>     m_streamSession;
         std::vector<uint8_t> m_outBuffer;
