@@ -844,6 +844,7 @@ namespace videocore
         memcpy(&first_byte, m_streamInBuffer->readBuffer(), 1);
         int header_type = (first_byte & 0xC0) >> 6;
         DLogVerbose("First byte:0x%X, header type:%d\n", (int)first_byte, header_type);
+        // TODO: remove the duplicate code
         switch(header_type) {
             case RTMP_HEADER_TYPE_FULL:
             {
@@ -929,7 +930,6 @@ namespace videocore
                 
             case RTMP_HEADER_TYPE_TIMESTAMP:
             {
-                // the message length is the same as previous message.
                 DLogDebug("Previous chunk length:%d, msgid:%d, streamid:%d\n", m_previousChunk.msg_length.data, m_previousChunk.msg_type_id, m_previousChunk.msg_stream_id);
                 RTMPChunk_2 chunk;
                 if (m_streamInBuffer->availableBytes() >= 1+sizeof(RTMPChunk_2)) {
@@ -957,6 +957,7 @@ namespace videocore
                 
             case RTMP_HEADER_TYPE_ONLY:
             {
+                // FIXME: like RTMP_HEADER_TYPE_TIMESTAMP
                 m_streamInBuffer->didRead(1);
                 return true;
             }
