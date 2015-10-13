@@ -71,6 +71,8 @@ namespace videocore
         if (m_uri.port == 0) {
             m_uri.port = 1935;
         }
+        
+        // find the last part of uri as app name
         auto sep_pos = m_uri.path.rfind('/');
         if (sep_pos != std::string::npos) {
             m_app = m_uri.path.substr(sep_pos+1);
@@ -78,6 +80,8 @@ namespace videocore
         else {
             m_app = m_uri.path;
         }
+        
+        // use stream key as the total pay path.
         m_playPath = streamKey;
         
         connectServer();

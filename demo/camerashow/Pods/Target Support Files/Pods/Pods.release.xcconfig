@@ -1,0 +1,5 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = ${PODS_ROOT}/boost $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/UriParser-cpp" "${PODS_ROOT}/Headers/Public/VideoCore" "${PODS_ROOT}/Headers/Public/glm"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/UriParser-cpp" -isystem "${PODS_ROOT}/Headers/Public/VideoCore" -isystem "${PODS_ROOT}/Headers/Public/glm"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"UriParser-cpp" -l"VideoCore" -l"c++" -framework "AVFoundation" -framework "AudioToolbox" -framework "CFNetwork" -framework "CoreGraphics" -framework "CoreMedia" -framework "CoreVideo" -framework "Foundation" -framework "OpenGLES" -framework "VideoToolbox"
+PODS_ROOT = ${SRCROOT}/Pods

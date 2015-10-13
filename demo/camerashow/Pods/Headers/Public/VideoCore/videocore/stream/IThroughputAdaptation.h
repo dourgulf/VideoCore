@@ -1,0 +1,1 @@
+../../../../../../../../stream/IThroughputAdaptation.h

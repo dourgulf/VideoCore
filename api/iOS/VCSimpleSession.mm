@@ -264,12 +264,9 @@ namespace videocore { namespace simpleApi {
 - (void) setRtmpSessionState:(VCSessionState)rtmpSessionState
 {
     _rtmpSessionState = rtmpSessionState;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // trigger in main thread, avoid autolayout engine exception
-        if(self.delegate) {
-                [self.delegate connectionStatusChanged:rtmpSessionState];
-        }
-    });
+    if(self.delegate) {
+            [self.delegate connectionStatusChanged:rtmpSessionState];
+    }
 }
 - (VCSessionState) rtmpSessionState
 {

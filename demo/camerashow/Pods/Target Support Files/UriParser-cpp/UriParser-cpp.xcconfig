@@ -1,0 +1,4 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/UriParser-cpp" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/UriParser-cpp" "${PODS_ROOT}/Headers/Public/VideoCore" "${PODS_ROOT}/Headers/Public/glm"
+PODS_ROOT = ${SRCROOT}
+SKIP_INSTALL = YES
