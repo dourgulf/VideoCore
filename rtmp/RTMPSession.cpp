@@ -33,16 +33,15 @@
 #endif
 #include <videocore/system/Logger.hpp>
 
-#include <boost/tokenizer.hpp>
+#include <sstream>
 #include <stdlib.h>
 #include <algorithm>
-#include <sstream>
 
 namespace videocore
 {
     static const size_t kMaxSendbufferSize = 10 * 1024 * 1024; // 10 MB
     
-    RTMPSession::RTMPSession(std::string uri, RTMPSessionStateCallback callback)
+    RTMPSession::RTMPSession(const std::string &uri, const std::string &streamKey, RTMPSessionStateCallback callback)
     : m_streamOutRemainder(65536)
     , m_streamInBuffer(new PreallocBuffer(4096))
     , m_callback(callback)
@@ -67,29 +66,19 @@ namespace videocore
         m_streamSession.reset(new Apple::StreamSession());
         m_networkWaitSemaphore = dispatch_semaphore_create(0);
 #endif
-        boost::char_separator<char> sep("/");
-        boost::tokenizer<boost::char_separator<char>> uri_tokens(uri, sep);
-        
-        // http::ParseHttpUrl is destructive to the parameter passed in.
         std::string uri_cpy(uri);
         m_uri = http::ParseHttpUrl(uri_cpy);
-        boost::tokenizer<boost::char_separator<char> > tokens(m_uri.path, sep );
-        
-        
-        int tokenCount = 0;
-        std::stringstream pp;
-        for ( auto it = uri_tokens.begin() ; it != uri_tokens.end() ; ++it) {
-            if(tokenCount++ < 2) { // skip protocol and host/port
-                continue;
-            }
-            if(tokenCount == 3) {
-                m_app = *it;
-            } else {
-                pp << *it << "/";
-            }
+        if (m_uri.port == 0) {
+            m_uri.port = 1935;
         }
-        m_playPath = pp.str();
-        m_playPath.pop_back();
+        auto sep_pos = m_uri.path.rfind('/');
+        if (sep_pos != std::string::npos) {
+            m_app = m_uri.path.substr(sep_pos+1);
+        }
+        else {
+            m_app = m_uri.path;
+        }
+        m_playPath = streamKey;
         
         connectServer();
     }
@@ -113,9 +102,8 @@ namespace videocore
     RTMPSession::connectServer() {
         // reset the stream buffer.
         m_streamInBuffer->reset();
-        int port = (m_uri.port > 0) ? m_uri.port : 1935;
-        DLog("Connecting:%s:%d, stream name:%s\n", m_uri.host.c_str(), port, m_playPath.c_str());
-        m_streamSession->connect(m_uri.host, port, [&](IStreamSession& session, StreamStatus_T status) {
+        DLog("Connecting:%s:%d, stream name:%s\n", m_uri.host.c_str(), m_uri.port, m_playPath.c_str());
+        m_streamSession->connect(m_uri.host, m_uri.port, [&](IStreamSession& session, StreamStatus_T status) {
             streamStatusChanged(status);
         });
     }
@@ -314,6 +302,7 @@ namespace videocore
                         }
                         else {
                             DLogDebug("Not enough s1 size\n");
+                            m_streamInBuffer->ensureCapacityForWrite(kRTMPSignatureSize);
                             stop1 = true;
                         }
                     }
@@ -329,6 +318,7 @@ namespace videocore
                         }
                         else {
                             DLogDebug("Not enough s2 size\n");
+                            m_streamInBuffer->ensureCapacityForWrite(kRTMPSignatureSize);
                             stop1 = true;
                         }
                     }

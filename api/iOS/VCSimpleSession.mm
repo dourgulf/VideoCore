@@ -524,11 +524,9 @@ namespace videocore { namespace simpleApi {
 - (void) startSessionInternal: (NSString*) rtmpUrl
                     streamKey: (NSString*) streamKey
 {
-    std::stringstream uri ;
-    uri << (rtmpUrl ? [rtmpUrl UTF8String] : "") << "/" << (streamKey ? [streamKey UTF8String] : "");
-
     m_outputSession.reset(
-                          new videocore::RTMPSession ( uri.str(),
+                          new videocore::RTMPSession ([rtmpUrl UTF8String],
+                                                      [streamKey UTF8String],
                                                       [=](videocore::RTMPSession& session,
                                                           ClientState_t state) {
 
@@ -575,7 +573,6 @@ namespace videocore { namespace simpleApi {
 
     m_outputSession->setBandwidthCallback([=](float vector, float predicted, int inst)
                                           {
-
                                               bSelf->_estimatedThroughput = predicted;
                                               auto video = std::dynamic_pointer_cast<videocore::IEncoder>( bSelf->m_h264Encoder );
                                               auto audio = std::dynamic_pointer_cast<videocore::IEncoder>( bSelf->m_aacEncoder );

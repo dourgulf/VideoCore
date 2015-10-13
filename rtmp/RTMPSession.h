@@ -27,7 +27,7 @@
 
 #include <iostream>
 #include <videocore/stream/IStreamSession.hpp>
-#include <videocore/stream/AsyncStreamSession.hpp>
+//#include <videocore/stream/AsyncStreamSession.hpp>
 #include <videocore/stream/TCPThroughputAdaptation.h>
 
 #include <UriParser/UriParser.hpp>
@@ -77,7 +77,7 @@ namespace videocore
     class RTMPSession : public IOutputSession
     {
     public:
-        RTMPSession(std::string uri, RTMPSessionStateCallback callback);
+        RTMPSession(const std::string &uri, const std::string &streamKey, RTMPSessionStateCallback callback);
         ~RTMPSession();
         
         void connectServer();
@@ -152,7 +152,6 @@ namespace videocore
         int                                 m_previousReceivedDelta;
         std::unique_ptr<PreallocBuffer>     m_streamInBuffer;
         std::unique_ptr<IStreamSession>     m_streamSession;
-        std::vector<uint8_t> m_outBuffer;
         http::url                       m_uri;
         
         RTMPSessionStateCallback        m_callback;

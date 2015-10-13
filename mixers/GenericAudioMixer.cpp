@@ -26,6 +26,7 @@
 #include <sstream>
 #include <vector>
 #include <stdint.h>
+#include <math.h>
 
 
 #ifndef INT16_MAX
@@ -346,7 +347,7 @@ namespace videocore {
         
         for( size_t i = 0 ; i < outSampleCount ; ++i )
         {
-            size_t iSample = (static_cast<size_t>(std::floor(currentInByteOffset))) & ~(bytesPerSample-1); // get an aligned sample.
+            size_t iSample = (static_cast<size_t>(floor(currentInByteOffset))) & ~(bytesPerSample-1); // get an aligned sample.
 
 
             currentInByteOffset += sampleStride;
