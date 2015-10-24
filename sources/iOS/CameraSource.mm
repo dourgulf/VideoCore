@@ -139,6 +139,8 @@ namespace videocore { namespace iOS {
                     }
                     bThis->m_captureSession = session;
                     
+                    addStillImageOut();
+                    
                     input = [AVCaptureDeviceInput deviceInputWithDevice:((AVCaptureDevice*)m_captureDevice) error:nil];
                     
                     output = [[AVCaptureVideoDataOutput alloc] init] ;
@@ -454,6 +456,34 @@ namespace videocore { namespace iOS {
         return ret;
     }
     
+    int CameraSource::flashMode() {
+        AVCaptureDevice *device = (AVCaptureDevice *)m_captureDevice;
+        if (![device hasFlash] || ![device isFlashAvailable]) {
+            return -1;
+        }
+        else {
+            return [device flashMode];
+        }
+    }
+    
+    void
+    CameraSource::setFlashMode(int mode) {
+        AVCaptureDevice *device = (AVCaptureDevice *)m_captureDevice;
+        if ([device hasFlash] && [device isFlashModeSupported:(AVCaptureFlashMode)mode])
+        {
+            NSError *error = nil;
+            if ([device lockForConfiguration:&error])
+            {
+                [device setFlashMode:(AVCaptureFlashMode)mode];
+                [device unlockForConfiguration];
+            }
+            else
+            {
+                NSLog(@"set flash mode error:%@", error);
+            }
+        }
+    }
+    
     bool
     CameraSource::setFocusPointOfInterest(float x, float y)
     {
@@ -503,5 +533,47 @@ namespace videocore { namespace iOS {
         return ret;
     }
     
+    void
+    CameraSource::addStillImageOut()
+    {
+        AVCaptureSession* session = (AVCaptureSession*)m_captureSession;
+        AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
+        if ([session canAddOutput:stillImageOutput])
+        {
+            [stillImageOutput setOutputSettings:@{AVVideoCodecKey : AVVideoCodecJPEG}];
+            [session addOutput:stillImageOutput];
+            this->m_stillImageOutput = stillImageOutput;
+        }
+    }
+    
+    void
+    CameraSource::snapStillImage(void (^callbackBlock)(void *)){
+        if (!m_stillImageOutput) {
+            NSLog(@"AVCaptureStillImageOutput not added");
+            return;
+        }
+        
+        AVCaptureStillImageOutput *stillImageOutput = (AVCaptureStillImageOutput *)m_stillImageOutput;
+        [stillImageOutput captureStillImageAsynchronouslyFromConnection:[stillImageOutput connectionWithMediaType:AVMediaTypeVideo]
+                                                      completionHandler:^(CMSampleBufferRef imageDataSampleBuffer, NSError *error)
+        {
+            if (imageDataSampleBuffer && !error) {
+                NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
+                callbackBlock(imageData);
+            }
+            else {
+                NSLog(@"Snap still image error:%@", error);
+            }
+        }];
+    }
+
+    void
+    CameraSource::removeStillImageOut()
+    {
+        AVCaptureSession* session = (AVCaptureSession*)m_captureSession;
+        AVCaptureStillImageOutput *stillImageOutput = (AVCaptureStillImageOutput *)m_stillImageOutput;
+        [session removeOutput:stillImageOutput];
+        m_captureSession = nullptr;
+    }
 }
 }

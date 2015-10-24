@@ -160,6 +160,7 @@ namespace videocore { namespace simpleApi {
 @dynamic orientationLocked;
 @dynamic torch;
 @dynamic cameraState;
+@dynamic flashMode;
 @dynamic aspectMode;
 @dynamic rtmpSessionState;
 @dynamic videoZoomFactor;
@@ -228,6 +229,7 @@ namespace videocore { namespace simpleApi {
 {
     return _torch;
 }
+
 - (void) setTorch:(BOOL)torch
 {
     if(m_cameraSource) {
@@ -238,6 +240,32 @@ namespace videocore { namespace simpleApi {
 {
     return _cameraState;
 }
+
+- (void) setCameraState:(VCCameraState)cameraState
+{
+    if(_cameraState != cameraState) {
+        _cameraState = cameraState;
+        if(m_cameraSource) {
+            m_cameraSource->toggleCamera();
+        }
+    }
+}
+
+- (VCFlashMode)flashMode {
+    if (m_cameraSource) {
+        return (VCFlashMode)m_cameraSource->flashMode();
+    }
+    else {
+        return VCFlashModeNotAvaible;
+    }
+}
+
+- (void) setFlashMode:(VCFlashMode)flashMode {
+    if (m_cameraSource) {
+        m_cameraSource->setFlashMode(flashMode);
+    }
+}
+
 - (void) setAspectMode:(VCAspectMode)aspectMode
 {
     _aspectMode = aspectMode;
@@ -252,15 +280,7 @@ namespace videocore { namespace simpleApi {
             break;
     }
 }
-- (void) setCameraState:(VCCameraState)cameraState
-{
-    if(_cameraState != cameraState) {
-        _cameraState = cameraState;
-        if(m_cameraSource) {
-            m_cameraSource->toggleCamera();
-        }
-    }
-}
+
 - (void) setRtmpSessionState:(VCSessionState)rtmpSessionState
 {
     _rtmpSessionState = rtmpSessionState;
@@ -511,7 +531,6 @@ namespace videocore { namespace simpleApi {
 - (void) startRtmpSessionWithURL:(NSString *)rtmpUrl
                     andStreamKey:(NSString *)streamKey
 {
-
     __block VCSimpleSession* bSelf = self;
 
     dispatch_async(_graphManagementQueue, ^{
@@ -782,7 +801,7 @@ namespace videocore { namespace simpleApi {
     {
         // Add mic source
         m_micSource = std::make_shared<videocore::iOS::MicSource>(self.audioSampleRate, self.audioChannelCount);
-        m_micSource->setOutput(m_audioMixer);
+//        m_micSource->setOutput(m_audioMixer);
 
         const auto epoch = std::chrono::steady_clock::now();
 
@@ -850,6 +869,7 @@ namespace videocore { namespace simpleApi {
 
     
 }
+
 - (void) addPixelBufferSource: (UIImage*) image
                      withRect:(CGRect)rect {
     CGImageRef ref = [image CGImage];
@@ -888,6 +908,18 @@ namespace videocore { namespace simpleApi {
     free(rawData);
     
 }
+
+- (void) snapStillImageWithCompletion:(void(^)(NSData *))handler{
+    if (m_cameraSource) {
+        m_cameraSource->snapStillImage(^(void *data) {
+            NSAssert([(id)data isKindOfClass:[NSData class]], @"数据类型正确");
+            if (handler) {
+                handler((NSData *)data);
+            }
+        });
+    }
+}
+
 - (NSString *) applicationDocumentsDirectory
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

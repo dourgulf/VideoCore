@@ -114,6 +114,16 @@ namespace videocore { namespace iOS {
         
         bool setContinuousExposure(bool wantsContinuous);
         
+        /*!
+         * Flash relative
+         */
+        int  flashMode();
+        
+        void setFlashMode(int mode);
+        
+        void addStillImageOut();
+        void snapStillImage(void (^callbackBlock)(void *));
+        void removeStillImageOut();
         
     public:
         /*! Used by Objective-C Capture Session */
@@ -132,7 +142,6 @@ namespace videocore { namespace iOS {
          * \return the camera device, if found.
          */
         void* cameraWithPosition(int position);
-        
     private:
         
         glm::mat4 m_matrix;
@@ -144,6 +153,8 @@ namespace videocore { namespace iOS {
         void* m_captureDevice;
         void* m_callbackSession;
         void* m_previewLayer;
+        
+        void* m_stillImageOutput;
         
         int  m_fps;
         bool m_torchOn;

@@ -53,6 +53,14 @@ typedef NS_ENUM(NSInteger, VCCameraState)
     VCCameraStateBack
 };
 
+typedef NS_ENUM(int, VCFlashMode)
+{
+    VCFlashModeNotAvaible = -1,
+    VCFlashModeOff  = 0,
+    VCFlashModeOn   = 1,
+    VCFlashModeAuto = 2
+};
+
 typedef NS_ENUM(NSInteger, VCAspectMode)
 {
     VCAspectModeFit,
@@ -90,6 +98,7 @@ typedef NS_ENUM(NSInteger, VCFilter) {
 @property (nonatomic, assign) int               fps;            // Change will not take place until the next RTMP Session
 @property (nonatomic, assign, readonly) BOOL    useInterfaceOrientation;
 @property (nonatomic, assign) VCCameraState cameraState;
+@property (nonatomic, assign) VCFlashMode   flashMode;
 @property (nonatomic, assign) BOOL          orientationLocked;
 @property (nonatomic, assign) BOOL          torch;
 @property (nonatomic, assign) float         videoZoomFactor;
@@ -153,4 +162,5 @@ typedef NS_ENUM(NSInteger, VCFilter) {
 - (void) addPixelBufferSource: (UIImage*) image
                      withRect: (CGRect) rect;
 
+- (void) snapStillImageWithCompletion:(void(^)(NSData *imageData))handler;
 @end
