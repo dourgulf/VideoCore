@@ -16,7 +16,20 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zvn-bK-Lxh">
+                                <rect key="frame" x="285" y="562" width="30" height="30"/>
+                                <state key="normal" title="📷"/>
+                                <connections>
+                                    <action selector="onLiveClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CAK-6L-Cr9"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Zvn-bK-Lxh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8yP-T5-HAw"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Zvn-bK-Lxh" secondAttribute="bottom" constant="8" symbolic="YES" id="VJy-qM-S0h"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
