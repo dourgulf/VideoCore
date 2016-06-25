@@ -1,12 +1,15 @@
 
-#VideoCore branch by me
+#VideoCore branch for me
 
-This project fork from [VideoCore](https://github.com/jgh-/VideoCore)
-Coz the jgh have not focus on this project for a long time. And I am using and improving this project for a long time, so I want to only update this branch later. 
+This project fork from [VideoCore](https://github.com/jgh-/VideoCore). Thanks the great work of jgh-
 
-BTW: Some Chinese company using VideoCore(like baidu and tencent), but I can't see any improve from such "great" company. It is a bad news?
+Coz jgh- had not focus on this project for a long time. And I was using and improving this project for a long time, so I want to only update this branch later. 
+
+BTW: There are some Chinese company using VideoCore(like Baidu and Tencent), but I can't see any improvement from such "great" company. It that a bad news?
 
 
+---
+#VideoCore
 VideoCore is a project inteded to be an audio and video manipulation and streaming graph.  It currently works with iOS.
 
 ###Table of Contents
