@@ -27,6 +27,6 @@
 
 @interface VCPreviewView : UIView
 
-- (void) drawFrame: (CVPixelBufferRef) pixelBuffer;
+- (void) drawFrame: (CVPixelBufferRef) pixelBuffer mirrored:(BOOL)mirrored;
 
 @end

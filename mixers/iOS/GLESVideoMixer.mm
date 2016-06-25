@@ -68,9 +68,26 @@ x ;\
 @implementation GLESObjCCallback
 - (instancetype) init {
     if((self = [super init])) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notification:) name:UIApplicationWillEnterForegroundNotification object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                 selector:@selector(pauseMixer)
+//                                                     name:UIApplicationWillResignActiveNotification
+//                                                   object:nil];
         
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(pauseMixer)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(resumeMixer)
+                                                     name:UIApplicationWillEnterForegroundNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(resumeMixer)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -78,17 +95,21 @@ x ;\
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
-- (void) notification: (NSNotification*) notification {
-    if([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification]) {
-        
-        _mixer->mixPaused(true);
-        
-    } else if([notification.name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
-        
-        _mixer->mixPaused(false);
-        
-    }
+
+- (void)notificationEvent:(NSNotification *)notification {
+    NSLog(@"notificationEvent:%@", notification);
 }
+
+- (void)pauseMixer {
+    NSLog(@"Pause video mixer");
+    _mixer->mixPaused(true);
+}
+
+- (void)resumeMixer {
+    NSLog(@"Resume video mixer");
+    _mixer->mixPaused(false);
+}
+
 - (void) setMixer: (videocore::iOS::GLESVideoMixer*) mixer
 {
     _mixer = mixer;
@@ -227,7 +248,7 @@ namespace videocore { namespace iOS {
         m_output.reset();
         m_exiting = true;
         m_mixThreadCond.notify_all();
-        DLog("GLESVideoMixer::~GLESVideoMixer()");
+        DLog("GLESVideoMixer::~GLESVideoMixer()\n");
         PERF_GL_sync({
             //glDeleteProgram(m_prog);
             glDeleteFramebuffers(2, m_fbo);

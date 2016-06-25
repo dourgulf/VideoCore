@@ -29,8 +29,9 @@
 #include <videocore/sources/ISource.hpp>
 #include <videocore/transforms/IOutput.hpp>
 #include <CoreVideo/CoreVideo.h>
+#include <CoreMedia/CMSampleBuffer.h>
+#import <AVFoundation/AVFoundation.h>
 #include <glm/glm.hpp>
-
 
 namespace videocore { namespace iOS {
     
@@ -50,7 +51,7 @@ namespace videocore { namespace iOS {
         
         /*! ISource::setOutput */
         void setOutput(std::shared_ptr<IOutput> output);
-        
+            
         /*! 
          *  Get the AVCaptureVideoPreviewLayer associated with the camera output.
          *
@@ -114,13 +115,27 @@ namespace videocore { namespace iOS {
         
         bool setContinuousExposure(bool wantsContinuous);
         
+        /*!
+         * Flash relative
+         */
+        int  flashMode();
         
+        void setFlashMode(int mode);
+        float minZoomScaleFactor();
+        float maxZoomScaleFactor();
+        void setZoomScaleFactor(float factor);
+        void setupStillImageOut();
+        void snapStillImage(void (^callbackBlock)(void *));
+        void removeStillImageOut();
+        void* previewView();
     public:
         /*! Used by Objective-C Capture Session */
+        void bufferCaptured(CMSampleBufferRef pixelBufferRef);
         void bufferCaptured(CVPixelBufferRef pixelBufferRef);
-        
         /*! Used by Objective-C Device/Interface Orientation Notifications */
         void reorientCamera();
+        
+        void resetVideoFrame();
         
     private:
         
@@ -145,13 +160,15 @@ namespace videocore { namespace iOS {
         void* m_callbackSession;
         void* m_previewLayer;
         
+        void* m_stillImageOutput;
+        
         int  m_fps;
         bool m_torchOn;
         bool m_useInterfaceOrientation;
         bool m_orientationLocked;
-
+        void* m_previewView;        
     };
-    
 }
 }
+
 #endif /* defined(__videocore__CameraSource__) */

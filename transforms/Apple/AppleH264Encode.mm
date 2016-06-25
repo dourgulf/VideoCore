@@ -34,7 +34,7 @@
 #endif
 
 #include <stdio.h>
-#include <videocore/transforms/Apple/H264Encode.h>
+#include <videocore/transforms/Apple/AppleH264Encode.h>
 #include <videocore/mixers/IVideoMixer.hpp>
 
 #if VERSION_OK==1
@@ -207,7 +207,7 @@ namespace videocore { namespace Apple {
         if(err == noErr) {
             m_compressionSession = session;
             
-            const int32_t v = m_fps * 2; // 2-second kfi
+            const int32_t v = m_fps * 2;
             
             CFNumberRef ref = CFNumberCreate(NULL, kCFNumberSInt32Type, &v);
             err = VTSessionSetProperty(session, kVTCompressionPropertyKey_MaxKeyFrameInterval, ref);
@@ -299,7 +299,7 @@ namespace videocore { namespace Apple {
             OSStatus ret = VTSessionSetProperty((VTCompressionSessionRef)m_compressionSession, kVTCompressionPropertyKey_AverageBitRate, ref);
             
             if(ret != noErr) {
-                DLog("H264Encode::setBitrate Error setting bitrate! %d", (int) ret);
+                DLog("H264Encode::setBitrate Error setting bitrate! %d\n", (int) ret);
             }
             CFRelease(ref);
             ret = VTSessionCopyProperty((VTCompressionSessionRef)m_compressionSession, kVTCompressionPropertyKey_AverageBitRate, kCFAllocatorDefault, &ref);

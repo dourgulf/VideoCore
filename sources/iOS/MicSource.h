@@ -62,6 +62,8 @@ namespace videocore { namespace iOS {
         /*! Destructor */
         ~MicSource();
 
+        void start();
+        void stop();
 
     public:
 

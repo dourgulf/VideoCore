@@ -26,7 +26,6 @@
 #include <map>
 #include <tuple>
 #include <string>
-#include <boost/lexical_cast.hpp>
 #include <videocore/system/util.h>
 
 
@@ -43,7 +42,7 @@ namespace videocore
         virtual const int32_t type() const = 0;
         union {
             double pts;
-            double timestampDelta __attribute__((deprecated));
+            double timestampDelta;// __attribute__((deprecated));
         };
         double dts;
     };

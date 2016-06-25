@@ -96,7 +96,7 @@ namespace videocore { namespace iOS {
             if(granted) {
 
                 [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionMixWithOthers error:nil];
-                //[session setMode:AVAudioSessionModeVideoChat error:nil];
+//                [session setMode:AVAudioSessionModeVideoChat error:nil];
                 [session setActive:YES error:nil];
                 
                 AudioComponentDescription acd;
@@ -109,6 +109,10 @@ namespace videocore { namespace iOS {
                 bThis->m_component = AudioComponentFindNext(NULL, &acd);
                 
                 AudioComponentInstanceNew(bThis->m_component, &bThis->m_audioUnit);
+                if(!bThis->m_audioUnit) {
+                    DLog("AudioComponentInstanceNew failed");
+                    return ;
+                }
                 
                 if(excludeAudioUnit) {
                     excludeAudioUnit(bThis->m_audioUnit);
@@ -139,10 +143,6 @@ namespace videocore { namespace iOS {
                 [[NSNotificationCenter defaultCenter] addObserver:m_interruptionHandler selector:@selector(handleInterruption:) name:AVAudioSessionInterruptionNotification object:nil];
                 
                 AudioUnitInitialize(bThis->m_audioUnit);
-                OSStatus ret = AudioOutputUnitStart(bThis->m_audioUnit);
-                if(ret != noErr) {
-                    DLog("Failed to start microphone!");
-                }
             }
         };
         
@@ -163,6 +163,24 @@ namespace videocore { namespace iOS {
         }
         
     }
+    
+    void
+    MicSource::start() {
+        OSStatus ret = AudioOutputUnitStart(m_audioUnit);
+        if(ret != noErr) {
+            DLog("Failed to start microphone!\n");
+        }
+        DLog("Mic source started\n");
+    }
+    
+    void MicSource::stop() {
+        OSStatus ret = AudioOutputUnitStop(m_audioUnit);
+        if(ret != noErr) {
+            DLog("Failed to stop microphone!\n");
+        }
+        DLog("Mic source stopped\n");
+    }
+    
     void
     MicSource::inputCallback(uint8_t *data, size_t data_size, int inNumberFrames)
     {

@@ -6,35 +6,40 @@ VideoCore is a project inteded to be an audio and video manipulation and streami
 
 ###Table of Contents
 * [Setup](#setup)
-* [Projects Using VideoCore](#projects-using-videocore)
 * [Architecture Overview](#architecture-overview)
 * [Version History](#version-history)
 
 ##Setup
 
-####CocoaPods
-
-Create a `Podfile` with the contents
-``` ruby
-platform :ios, '6.0'
-pod 'VideoCore', '~> 0.2.0'
-```
-Next, run `pod install` and open the `xcworkspace` file that is created.
-
-####Sample Application
-The SampleBroadcaster project in the sample folder uses CocoaPods to bring in
-VideoCore as a dependency:
+Create a Podfile with the contents
 
 ```
-cd sample/SampleBroadcaster
+platform :ios, '8.0'
+source 'https://github.com/CocoaPods/Specs.git'
+pod 'VideoCore', path: '../..'
+```
+*Note: the last line depend on the relationship of your project and the VideoCore*
+
+####Demo Application
+The SampleBroadcaster project in the demo folder uses CocoaPods to bring in
+local VideoCore as a dependency:
+
+```
+cd demo/SampleBroadcaster
 pod install
 open SampleBroadcaster.xcworkspace
 ```
+Maybe "pod install --verbose --no-repo-update" will be faster in Chinese
 
-... or you can build from the command-line:
+Every time you update run the pod command you should do the setting modification:
+
 ```
-xcodebuild -workspace SampleBroadcaster.xcworkspace -scheme SampleBroadcaster build
+select Pods project with VideoCore target, find "Header Search Paths" setting and remove "${PODS_ROOT}/Headers/Private" and "${PODS_ROOT}/Headers/Private/VideoCore" item
+
 ```
+
+I want anybody can tell me how the change the pod file to avoid this action
+
 More on CocoaPods: http://cocoapods.org/
 
 ##Architecture Overview
@@ -91,7 +96,12 @@ videocore::Apple::StreamSession : videocore::IStreamSession
 ```
 
 ##Version History
-
+* 0.4.1
+	 * Various crash bugfixes
+	 * Remove boost dependency
+	 * Much function about camera, like zoom, focus etc.
+	 * Beautify filter added (modify from ....)
+	 * Rewrite a demo project without using the broken Pod
 * 0.3.1
     * Various bugfixes
     * Introduction of pixel buffer sources so you can add images to broadcast.

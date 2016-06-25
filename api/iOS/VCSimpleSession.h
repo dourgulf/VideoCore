@@ -49,8 +49,16 @@ typedef NS_ENUM(NSInteger, VCSessionState)
 
 typedef NS_ENUM(NSInteger, VCCameraState)
 {
-    VCCameraStateFront,
-    VCCameraStateBack
+    VCCameraStateFront = 0,
+    VCCameraStateBack = 1
+};
+
+typedef NS_ENUM(int, VCFlashMode)
+{
+    VCFlashModeNotAvaible = -1,
+    VCFlashModeOff  = 0,
+    VCFlashModeOn   = 1,
+    VCFlashModeAuto = 2
 };
 
 typedef NS_ENUM(NSInteger, VCAspectMode)
@@ -75,7 +83,6 @@ typedef NS_ENUM(NSInteger, VCFilter) {
 @optional
 - (void) didAddCameraSource:(VCSimpleSession*)session;
 
-- (void) detectedThroughput: (NSInteger) throughputInBytesPerSecond; //Depreciated, should use method below
 - (void) detectedThroughput: (NSInteger) throughputInBytesPerSecond videoRate:(NSInteger) rate;
 @end
 
@@ -90,9 +97,12 @@ typedef NS_ENUM(NSInteger, VCFilter) {
 @property (nonatomic, assign) int               fps;            // Change will not take place until the next RTMP Session
 @property (nonatomic, assign, readonly) BOOL    useInterfaceOrientation;
 @property (nonatomic, assign) VCCameraState cameraState;
+@property (nonatomic, assign) VCFlashMode   flashMode;
 @property (nonatomic, assign) BOOL          orientationLocked;
 @property (nonatomic, assign) BOOL          torch;
 @property (nonatomic, assign) float         videoZoomFactor;
+@property (nonatomic, readonly) float       maxVideoZoomFactor;
+@property (nonatomic, readonly) float       minVideoZoomFactor;
 @property (nonatomic, assign) int           audioChannelCount;
 @property (nonatomic, assign) float         audioSampleRate;
 @property (nonatomic, assign) float         micGain;        // [0..1]
@@ -141,6 +151,10 @@ typedef NS_ENUM(NSInteger, VCFilter) {
 
 - (void) endRtmpSession;
 
+//- (void) enterBackground;
+
+- (void) enableBeauty:(BOOL)enable;
+
 - (void) getCameraPreviewLayer: (AVCaptureVideoPreviewLayer**) previewLayer;
 
 /*!
@@ -153,4 +167,5 @@ typedef NS_ENUM(NSInteger, VCFilter) {
 - (void) addPixelBufferSource: (UIImage*) image
                      withRect: (CGRect) rect;
 
+- (void) snapStillImageWithCompletion:(void(^)(NSData *imageData))handler;
 @end

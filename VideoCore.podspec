@@ -1,16 +1,16 @@
 Pod::Spec.new do |s|
   s.name                = "VideoCore"
-  s.version             = "0.3.2"
+  s.version             = "0.4.1"
   s.summary             = "An audio and video manipulation and streaming pipeline with support for RTMP."
   s.description      = <<-DESC
                           This is a work-in-progress library with the
                           intention of being an audio and video manipulation
                           and streaming pipeline for iOS.
                           DESC
-  s.homepage            = "https://github.com/jgh-/VideoCore"
+  s.homepage            = "https://github.com/dourgulf/VideoCore"
   s.license             = 'MIT'
-  s.authors             = { "James Hurley" => "jamesghurley@gmail.com" }
-  s.source              = { :git => "https://github.com/jgh-/VideoCore.git", :tag => s.version.to_s }
+  s.authors             = { "dawenhing" => "dawenhing@outlook.com" }
+  s.source              = { :git => "https://github.com/dourgulf/VideoCore", :tag => s.version.to_s }
 
   s.requires_arc        = false
 
@@ -31,13 +31,12 @@ Pod::Spec.new do |s|
 
   s.libraries           = 'c++'
 
-  s.dependency          'boost', '~> 1.51.0'
   s.dependency          'glm', '~> 0.9.4.6'
   s.dependency          'UriParser-cpp', '~> 0.1.3'
 
-  s.xcconfig            = { "HEADER_SEARCH_PATHS" => "${PODS_ROOT}/boost" }
+  s.xcconfig            = { }
 
-  s.ios.deployment_target = '5.0'
+  s.ios.deployment_target = '8.0'
 
   # Before we can get OS X deployment working, we'll need to use sub-specs to
   # separate out the source files for OS X vs. iOS

@@ -36,6 +36,7 @@
 
 #include <atomic>
 
+
 @interface VCPreviewView()
 {
     GLuint _renderBuffer;
@@ -56,6 +57,7 @@
 }
 @property (nonatomic, strong) EAGLContext* context;
 @property (nonatomic) CAEAGLLayer* glLayer;
+
 @end
 @implementation VCPreviewView
 
@@ -81,21 +83,21 @@
     }
     return self;
 }
+
 - (void) awakeFromNib {
     [self initInternal];
 }
+
 - (void) initInternal {
     // Initialization code
     self.glLayer = (CAEAGLLayer*)self.layer;
     
-    NSLog(@"Creating context");
     _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     
     if(!self.context) {
         NSLog(@"Context creation failed");
-    } else {
-        NSLog(@"Context creation succeeded");
     }
+    
     self.autoresizingMask = 0xFF;
     
     _currentRef [0] = _currentRef[1] = nil;
@@ -111,9 +113,28 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [bSelf setupGLES];
     });
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notification:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(pausePreview)
+                                                 name:UIApplicationWillResignActiveNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(pausePreview)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resumePreview)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resumePreview)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
 }
+
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -150,24 +171,37 @@
     self.context = nil;
     [super dealloc];
 }
+
 - (void) layoutSubviews
 {
+    NSLog(@"VCPreviewView layoutSubviews");
     self.backgroundColor = [UIColor blackColor];
     [self generateGLESBuffers];
 }
-- (void) notification: (NSNotification*) notification {
-    if([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification]) {
-        _paused = true;
-    } else if([notification.name isEqualToString:UIApplicationWillEnterForegroundNotification]) {
-        _paused = false;
-    }
+
+- (void)notificationEvent:(NSNotification *)notification {
+    NSLog(@"notificationEvent:%@", notification);
 }
+
+- (void) pausePreview {
+    NSLog(@"Pause drawing");
+    _paused = true;
+}
+
+- (void)resumePreview {
+    NSLog(@"Resume drawing");
+    _paused = false;
+}
+
 #pragma mark - Public Methods
 
-- (void) drawFrame:(CVPixelBufferRef)pixelBuffer
+- (void) drawFrame: (CVPixelBufferRef) pixelBuffer mirrored:(BOOL)mirrored;
 {
     
-    if(_paused) return;
+    if(_paused) {
+        NSLog(@"Paused, dont draw");
+        return ;
+    }
     
     bool updateTexture = false;
     
@@ -190,7 +224,11 @@
     __block VCPreviewView* bSelf = self;
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        
+        if(_paused) {
+            NSLog(@"Paused, dont draw");
+            return ;
+        }
+
         EAGLContext* current = [EAGLContext currentContext];
         [EAGLContext setCurrentContext:bSelf.context];
         
@@ -248,7 +286,12 @@
         wfac = width*mult / float(bSelf.bounds.size.width);
         hfac = height*mult / float(bSelf.bounds.size.height);
         
-        matrix = glm::scale(matrix, glm::vec3(1.f * wfac,-1.f * hfac,1.f));
+        if (mirrored) {
+            matrix = glm::scale(matrix, glm::vec3(-1.f * wfac, -1.f * hfac,1.f));
+        }
+        else {
+            matrix = glm::scale(matrix, glm::vec3(1.f * wfac, -1.f * hfac,1.f));            
+        }
         
         glUniformMatrix4fv(bSelf->_matrixPos, 1, GL_FALSE, &matrix[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -296,6 +339,7 @@
     
     [EAGLContext setCurrentContext:current];
 }
+
 - (void) setupGLES
 {
     EAGLContext* current = [EAGLContext currentContext];
