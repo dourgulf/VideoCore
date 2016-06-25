@@ -1,8 +1,13 @@
 
+#VideoCore branch by me
 
-#VideoCore
+This project fork from [VideoCore](https://github.com/jgh-/VideoCore)
+Coz the jgh have not focus on this project for a long time. And I am using and improving this project for a long time, so I want to only update this branch later. 
 
-VideoCore is a project inteded to be an audio and video manipulation and streaming graph.  It currently works with iOS and periodic (live) sources.  It is a work in progress and will eventually expand to other platforms such as OS X and Android.  **Contributors welcome!** 
+BTW: Some Chinese company using VideoCore(like baidu and tencent), but I can't see any improve from such "great" company. It is a bad news?
+
+
+VideoCore is a project inteded to be an audio and video manipulation and streaming graph.  It currently works with iOS.
 
 ###Table of Contents
 * [Setup](#setup)
@@ -18,7 +23,7 @@ platform :ios, '8.0'
 source 'https://github.com/CocoaPods/Specs.git'
 pod 'VideoCore', path: '../..'
 ```
-*Note: the last line depend on the relationship of your project and the VideoCore*
+*Note: the last line depend on the relationship between your project and the VideoCore source code*
 
 ####Demo Application
 The SampleBroadcaster project in the demo folder uses CocoaPods to bring in
@@ -29,9 +34,9 @@ cd demo/SampleBroadcaster
 pod install
 open SampleBroadcaster.xcworkspace
 ```
-Maybe "pod install --verbose --no-repo-update" will be faster in Chinese
+Maybe "pod install --verbose --no-repo-update" will be faster in China
 
-Every time you update run the pod command you should do the setting modification:
+Every time yo run the pod command you should do the setting modification:
 
 ```
 select Pods project with VideoCore target, find "Header Search Paths" setting and remove "${PODS_ROOT}/Headers/Private" and "${PODS_ROOT}/Headers/Private/VideoCore" item
@@ -39,8 +44,6 @@ select Pods project with VideoCore target, find "Header Search Paths" setting an
 ```
 
 I want anybody can tell me how the change the pod file to avoid this action
-
-More on CocoaPods: http://cocoapods.org/
 
 ##Architecture Overview
 
@@ -97,11 +100,10 @@ videocore::Apple::StreamSession : videocore::IStreamSession
 
 ##Version History
 * 0.4.1
-	 * Various crash bugfixes
+	 * Various crash case bugfixes
 	 * Remove boost dependency
-	 * Much function about camera, like zoom, focus etc.
-	 * Beautify filter added (modify from ....)
-	 * Rewrite a demo project without using the broken Pod
+	 * Much function about camera, like zoom, focus etc added.
+	 * Beautify filter added (import from project [LiveVideoCoreSDK](https://github.com/runner365/LiveVideoCoreSDK)), I can't find this project's license, I will take care this part later.
 * 0.3.1
     * Various bugfixes
     * Introduction of pixel buffer sources so you can add images to broadcast.
