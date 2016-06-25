@@ -46,7 +46,7 @@ select Pods project with VideoCore target, find "Header Search Paths" setting an
 
 ```
 
-I want anybody can tell me how the change the pod file to avoid this action
+I want anybody can tell me how to change the pod file to avoid this action??
 
 ##Architecture Overview
 
