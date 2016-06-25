@@ -1,7 +1,7 @@
 
 #VideoCore branch for me
 
-This project fork from [VideoCore](https://github.com/jgh-/VideoCore). Thanks the great work of jgh-
+This project fork from [VideoCore](https://github.com/jgh-/VideoCore). Thanks the great work of jgh-.
 
 Coz jgh- had not focus on this project for a long time. And I was using and improving this project for a long time, so I want to only update this branch later. 
 
