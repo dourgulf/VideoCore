@@ -68,7 +68,9 @@ namespace videocore {
         
         StreamSession::~StreamSession()
         {
-            SCB(m_streamCallback).session = nullptr;
+            [NSIS(m_inputStream) setDelegate:nil];
+            [NSOS(m_outputStream) setDelegate:nil];
+
             disconnect();
             [SCB(m_streamCallback) release];
         }

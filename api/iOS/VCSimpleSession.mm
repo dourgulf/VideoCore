@@ -733,9 +733,9 @@ namespace videocore { namespace simpleApi {
         }
         
         _filter = filterToChange;
-        NSLog(@"FILTER IS : [%d]", (int)_filter);
+        NSLog(@"setFilter:[%d] %@", (int)_filter, filterName);
         std::string convertString([filterName UTF8String]);
-        m_videoMixer->setSourceFilter(m_cameraSource, dynamic_cast<videocore::IVideoFilter*>(m_videoMixer->filterFactory().filter(convertString))); // default is com.videocore.filters.bgra
+        m_videoMixer->setSourceFilter(m_cameraSource, dynamic_cast<videocore::IVideoFilter*>(m_videoMixer->filterFactory().filter(convertString)));
 }
 
 // -----------------------------------------------------------------------------

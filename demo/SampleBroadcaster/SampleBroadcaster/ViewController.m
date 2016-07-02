@@ -9,14 +9,17 @@
 #import "ViewController.h"
 #import <videocore/api/iOS/VCSimpleSession.h>
 
+#import "ConnectionKeeper.h"
+
 @interface ViewController ()<VCSessionDelegate> {
 }
 
 @property (strong, nonatomic) VCSimpleSession *liveSession;
-
+@property (strong, nonatomic) ConnectionKeeper *liveKeeper;
 @end
 
-@implementation ViewController
+@implementation ViewController {
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -28,7 +31,18 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)onLiveClicked:(id)sender {
+- (IBAction)onLiveClicked:(UIButton *)sender {
+    if (!sender.selected) {
+        [self setupSession];
+        [self startPushVideo];
+    }
+    else {
+        [self stopPushVideo];
+        [self releaseSession];
+    }
+    sender.selected = !sender.selected;
+    
+    
 }
 
 - (void)setupSession {
@@ -46,23 +60,23 @@
                                                           bitrate:1000 * 1000
                                           useInterfaceOrientation:YES
                                                       cameraState:VCCameraStateFront];
-    self.liveSession.delegate = self;
+    self.liveKeeper = [[ConnectionKeeper alloc] init];
+    self.liveKeeper.liveSession = self.liveSession;
     [self.view addSubview:self.liveSession.previewView];
 }
 
 - (void)releaseSession {
     self.liveSession = nil;
+    self.liveKeeper = nil;
 }
 
 - (void)startPushVideo {
-    NSAssert(self.liveSession, @"未初始化");
     if (self.liveSession == nil) {
-        NSLog(@"Warning: invalid state, live session is nil");
         return ;
     }
     
-    NSString *urlstr = @"";
-    NSString *streamName = @"";
+    NSString *urlstr =  @"rtmp://pushvidoews.inhand.tv/lizi";
+    NSString *streamName = @"broken_test";
     int bitrate = -1;
     
     NSLog(@"Streaming:%@/%@ with bitrate:%d", urlstr, streamName, bitrate);
@@ -82,45 +96,12 @@
 
 #pragma mark - Video session
 - (void)connectionStatusChanged:(VCSessionState) state {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        switch(state) {
-            case VCSessionStatePreviewStarted:
-            {
-                NSLog(@"Video Session start preview");
-            }
-                break;
-                
-            case VCSessionStateStarting:
-                NSLog(@"Video Session connecting");
-                break;
-                
-            case VCSessionStateStarted: {
-                NSLog(@"Video Session connected");
-            }
-                break;
-            case VCSessionStateEnded:
-            {
-                NSLog(@"Video Session disconnected");
-            }
-                break;
-            case VCSessionStateError:
-            {
-                NSLog(@"Video Session ERROR!!");
-            }
-                break;
-            default:
-            {
-                NSLog(@"Video Session UNKNOWN");
-            }
-                break;
-        }
-    });
+    NSLog(@"connectionStatusChanged:%@", @(state));
 }
 
 #pragma mark CameraSource delegate
 - (void)didAddCameraSource:(VCSimpleSession*)session {
-    // 默认开启美颜
-    [self.liveSession enableBeauty:true];
+    NSLog(@"didAddCameraSource");
 }
 
 - (void) detectedThroughput: (NSInteger)throughputInBytesPerSecond videoRate:(NSInteger) rate {

@@ -17,8 +17,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zvn-bK-Lxh">
-                                <rect key="frame" x="285" y="562" width="30" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zvn-bK-Lxh">
+                                <rect key="frame" x="260" y="512" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="1pY-Qe-ifD"/>
+                                    <constraint firstAttribute="height" constant="80" id="rhI-YJ-bvT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="38"/>
                                 <state key="normal" title="📷"/>
                                 <connections>
                                     <action selector="onLiveClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CAK-6L-Cr9"/>
