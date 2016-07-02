@@ -75,8 +75,8 @@
         return ;
     }
     
-    NSString *urlstr =  @"rtmp://pushvidoews.inhand.tv/lizi";
-    NSString *streamName = @"broken_test";
+    NSString *urlstr =  @"";
+    NSString *streamName = @"";
     int bitrate = -1;
     
     NSLog(@"Streaming:%@/%@ with bitrate:%d", urlstr, streamName, bitrate);
