@@ -553,7 +553,9 @@ namespace videocore { namespace simpleApi {
 - (void) startRtmpSessionWithURL:(NSString *)rtmpUrl
                     andStreamKey:(NSString *)streamKey
 {
-    m_micSource->start();
+    if (m_micSource) {
+        m_micSource->start();
+    }
     dispatch_async(_graphManagementQueue, ^{
         [self startSessionInternal:rtmpUrl streamKey:streamKey];
     });
@@ -837,6 +839,7 @@ namespace videocore { namespace simpleApi {
     {
         // Add mic source
         m_micSource = std::make_shared<videocore::iOS::MicSource>(self.audioSampleRate, self.audioChannelCount);
+        m_micSource->start();
         m_micSource->setOutput(m_audioMixer);
 
         const auto epoch = std::chrono::steady_clock::now();
@@ -846,9 +849,12 @@ namespace videocore { namespace simpleApi {
 
         m_audioMixer->start();
         m_videoMixer->start();
-
+    }
+    if ([self.delegate respondsToSelector:@selector(didSetupGraph)]) {
+        [self.delegate didSetupGraph];
     }
 }
+
 - (void) addEncodersAndPacketizers
 {
     int ctsOffset = 2000 / self.fps; // 2 * frame duration

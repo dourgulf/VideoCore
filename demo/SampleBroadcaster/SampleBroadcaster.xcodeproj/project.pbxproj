@@ -8,31 +8,33 @@
 
 /* Begin PBXBuildFile section */
 		60377265B653243BEDEFCB17 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64DE33CFB5FF52E62FC7231E /* libPods.a */; };
+		D04626631D2BB2FA0042745B /* LivingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D04626621D2BB2FA0042745B /* LivingVC.m */; };
+		D04626661D2BB5190042745B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04626641D2BB5190042745B /* Main.storyboard */; };
+		D046266A1D2BC0BA0042745B /* LivingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04626691D2BC0BA0042745B /* LivingVC.xib */; };
 		D090E6E51D1E61DD0006AB52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6E41D1E61DD0006AB52 /* main.m */; };
 		D090E6E81D1E61DD0006AB52 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6E71D1E61DD0006AB52 /* AppDelegate.m */; };
-		D090E6EB1D1E61DD0006AB52 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6EA1D1E61DD0006AB52 /* ViewController.m */; };
-		D090E6EE1D1E61DD0006AB52 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D090E6EC1D1E61DD0006AB52 /* Main.storyboard */; };
+		D090E6EB1D1E61DD0006AB52 /* PrepareLiveVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6EA1D1E61DD0006AB52 /* PrepareLiveVC.m */; };
 		D090E6F01D1E61DD0006AB52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D090E6EF1D1E61DD0006AB52 /* Assets.xcassets */; };
 		D090E6F31D1E61DD0006AB52 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D090E6F11D1E61DD0006AB52 /* LaunchScreen.storyboard */; };
-		D0D9CDE91D23A2F5005C0BED /* ConnectionKeeper.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D9CDE81D23A2F5005C0BED /* ConnectionKeeper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0DD5CAF8430D64237EBBAEF6 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		29F23302794CBBA3910F469C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		64DE33CFB5FF52E62FC7231E /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D04626611D2BB2FA0042745B /* LivingVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LivingVC.h; sourceTree = "<group>"; };
+		D04626621D2BB2FA0042745B /* LivingVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LivingVC.m; sourceTree = "<group>"; };
+		D04626651D2BB5190042745B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D04626691D2BC0BA0042745B /* LivingVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LivingVC.xib; sourceTree = "<group>"; };
 		D090E6E01D1E61DD0006AB52 /* SampleBroadcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleBroadcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D090E6E41D1E61DD0006AB52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D090E6E61D1E61DD0006AB52 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D090E6E71D1E61DD0006AB52 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		D090E6E91D1E61DD0006AB52 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		D090E6EA1D1E61DD0006AB52 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		D090E6ED1D1E61DD0006AB52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D090E6E91D1E61DD0006AB52 /* PrepareLiveVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrepareLiveVC.h; sourceTree = "<group>"; };
+		D090E6EA1D1E61DD0006AB52 /* PrepareLiveVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrepareLiveVC.m; sourceTree = "<group>"; };
 		D090E6EF1D1E61DD0006AB52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D090E6F21D1E61DD0006AB52 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D090E6F41D1E61DD0006AB52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D0D9CDE71D23A2F5005C0BED /* ConnectionKeeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionKeeper.h; sourceTree = "<group>"; };
-		D0D9CDE81D23A2F5005C0BED /* ConnectionKeeper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionKeeper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,13 +87,14 @@
 		D090E6E21D1E61DD0006AB52 /* SampleBroadcaster */ = {
 			isa = PBXGroup;
 			children = (
+				D04626641D2BB5190042745B /* Main.storyboard */,
+				D04626691D2BC0BA0042745B /* LivingVC.xib */,
 				D090E6E61D1E61DD0006AB52 /* AppDelegate.h */,
 				D090E6E71D1E61DD0006AB52 /* AppDelegate.m */,
-				D090E6E91D1E61DD0006AB52 /* ViewController.h */,
-				D090E6EA1D1E61DD0006AB52 /* ViewController.m */,
-				D0D9CDE71D23A2F5005C0BED /* ConnectionKeeper.h */,
-				D0D9CDE81D23A2F5005C0BED /* ConnectionKeeper.m */,
-				D090E6EC1D1E61DD0006AB52 /* Main.storyboard */,
+				D090E6E91D1E61DD0006AB52 /* PrepareLiveVC.h */,
+				D090E6EA1D1E61DD0006AB52 /* PrepareLiveVC.m */,
+				D04626611D2BB2FA0042745B /* LivingVC.h */,
+				D04626621D2BB2FA0042745B /* LivingVC.m */,
 				D090E6EF1D1E61DD0006AB52 /* Assets.xcassets */,
 				D090E6F11D1E61DD0006AB52 /* LaunchScreen.storyboard */,
 				D090E6F41D1E61DD0006AB52 /* Info.plist */,
@@ -142,6 +145,11 @@
 				TargetAttributes = {
 					D090E6DF1D1E61DD0006AB52 = {
 						CreatedOnToolsVersion = 7.3;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -168,9 +176,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D04626661D2BB5190042745B /* Main.storyboard in Resources */,
 				D090E6F31D1E61DD0006AB52 /* LaunchScreen.storyboard in Resources */,
 				D090E6F01D1E61DD0006AB52 /* Assets.xcassets in Resources */,
-				D090E6EE1D1E61DD0006AB52 /* Main.storyboard in Resources */,
+				D046266A1D2BC0BA0042745B /* LivingVC.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,9 +238,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D090E6EB1D1E61DD0006AB52 /* ViewController.m in Sources */,
-				D0D9CDE91D23A2F5005C0BED /* ConnectionKeeper.m in Sources */,
+				D090E6EB1D1E61DD0006AB52 /* PrepareLiveVC.m in Sources */,
 				D090E6E81D1E61DD0006AB52 /* AppDelegate.m in Sources */,
+				D04626631D2BB2FA0042745B /* LivingVC.m in Sources */,
 				D090E6E51D1E61DD0006AB52 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,10 +248,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		D090E6EC1D1E61DD0006AB52 /* Main.storyboard */ = {
+		D04626641D2BB5190042745B /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D090E6ED1D1E61DD0006AB52 /* Base */,
+				D04626651D2BB5190042745B /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -346,6 +355,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = SampleBroadcaster/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = top.dawenhing.SampleBroadcaster;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -358,6 +368,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = SampleBroadcaster/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = top.dawenhing.SampleBroadcaster;
 				PRODUCT_NAME = "$(TARGET_NAME)";
