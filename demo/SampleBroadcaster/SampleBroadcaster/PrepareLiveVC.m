@@ -21,12 +21,13 @@
 @implementation PrepareLiveVC {
 }
 
-- (IBAction)onLiveClicked:(UIButton *)sender {
-    LivingVC *vc = [[LivingVC alloc] init];
-    vc.pushURL = self.streamURLText.text;
-    vc.streamName = self.streamNameText.text;
-    vc.bitrate = [[[[NSNumberFormatter alloc] init] numberFromString:self.bitrateText.text] intValue];
-    [self.navigationController pushViewController:vc animated:YES];
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"showLivingVC"]) {
+         LivingVC *vc = (LivingVC *)segue.destinationViewController;
+        vc.pushURL = self.streamURLText.text;
+        vc.streamName = self.streamNameText.text;
+        vc.bitrate = [[[[NSNumberFormatter alloc] init] numberFromString:self.bitrateText.text] intValue];
+    }
 }
 
 @end

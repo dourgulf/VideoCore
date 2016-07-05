@@ -10,7 +10,6 @@
 		60377265B653243BEDEFCB17 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64DE33CFB5FF52E62FC7231E /* libPods.a */; };
 		D04626631D2BB2FA0042745B /* LivingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D04626621D2BB2FA0042745B /* LivingVC.m */; };
 		D04626661D2BB5190042745B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04626641D2BB5190042745B /* Main.storyboard */; };
-		D046266A1D2BC0BA0042745B /* LivingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = D04626691D2BC0BA0042745B /* LivingVC.xib */; };
 		D090E6E51D1E61DD0006AB52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6E41D1E61DD0006AB52 /* main.m */; };
 		D090E6E81D1E61DD0006AB52 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6E71D1E61DD0006AB52 /* AppDelegate.m */; };
 		D090E6EB1D1E61DD0006AB52 /* PrepareLiveVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6EA1D1E61DD0006AB52 /* PrepareLiveVC.m */; };
@@ -25,7 +24,6 @@
 		D04626611D2BB2FA0042745B /* LivingVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LivingVC.h; sourceTree = "<group>"; };
 		D04626621D2BB2FA0042745B /* LivingVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LivingVC.m; sourceTree = "<group>"; };
 		D04626651D2BB5190042745B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		D04626691D2BC0BA0042745B /* LivingVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LivingVC.xib; sourceTree = "<group>"; };
 		D090E6E01D1E61DD0006AB52 /* SampleBroadcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleBroadcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D090E6E41D1E61DD0006AB52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D090E6E61D1E61DD0006AB52 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -88,7 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				D04626641D2BB5190042745B /* Main.storyboard */,
-				D04626691D2BC0BA0042745B /* LivingVC.xib */,
 				D090E6E61D1E61DD0006AB52 /* AppDelegate.h */,
 				D090E6E71D1E61DD0006AB52 /* AppDelegate.m */,
 				D090E6E91D1E61DD0006AB52 /* PrepareLiveVC.h */,
@@ -179,7 +176,6 @@
 				D04626661D2BB5190042745B /* Main.storyboard in Resources */,
 				D090E6F31D1E61DD0006AB52 /* LaunchScreen.storyboard in Resources */,
 				D090E6F01D1E61DD0006AB52 /* Assets.xcassets in Resources */,
-				D046266A1D2BC0BA0042745B /* LivingVC.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

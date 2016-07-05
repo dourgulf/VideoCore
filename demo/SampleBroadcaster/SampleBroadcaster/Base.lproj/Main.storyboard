@@ -47,7 +47,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="📷"/>
                                 <connections>
-                                    <action selector="onLiveClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xlh-d6-IkY"/>
+                                    <segue destination="wtZ-Nr-3yQ" kind="show" identifier="showLivingVC" id="DdR-IN-fIw"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -75,7 +75,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-40" y="494"/>
+            <point key="canvasLocation" x="250" y="522"/>
+        </scene>
+        <!--LivingVC-->
+        <scene sceneID="XXX-Gb-sin">
+            <objects>
+                <viewController id="wtZ-Nr-3yQ" customClass="LivingVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6fq-mH-cMb"/>
+                        <viewControllerLayoutGuide type="bottom" id="HC0-fD-XSb"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="R2L-Dv-Cry">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="F1w-q4-ktn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="959" y="522"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="kDU-vz-u51">
