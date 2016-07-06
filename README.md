@@ -7,6 +7,7 @@ Coz jgh- had not focus on this project for a long time. And I was using and impr
 
 BTW: There are some Chinese company using VideoCore(like Baidu and Tencent), but I can't see any improvement from such "great" company. It that a bad news?
 
+For more dicuss, join my QQ group:1360583
 
 ---
 #VideoCore
