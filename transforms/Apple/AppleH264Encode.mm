@@ -141,6 +141,13 @@ namespace videocore { namespace Apple {
             }
             
             m_encodeMutex.unlock();
+            if ( ( flags != kVTEncodeInfo_Asynchronous ) && ( flags != kVTEncodeInfo_FrameDropped ) )
+            {
+                DLog("VTCompressionSessionEncodeFrame flags:%d\n", flags);
+                // not success flags, restart encoder.
+                teardownCompressionSession();
+                setupCompressionSession(m_baseline);
+            }
         }
 #endif
     }
