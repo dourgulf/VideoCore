@@ -10,10 +10,13 @@
 
 #import <videocore/api/iOS/VCSimpleSession.h>
 #import "Masonry.h"
+#import "LiveKeeper.h"
 
 @interface LivingVC() <VCSessionDelegate>
 
 @property (strong, nonatomic) VCSimpleSession *liveSession;
+@property (weak, nonatomic) IBOutlet UILabel *liveStatusLabel;
+@property (strong, nonatomic) LiveKeeper *liveKeeper;
 
 @end
 
@@ -21,6 +24,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self setupLiveKeeper];
     [self setupSession];
 }
 
@@ -41,6 +45,25 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)setupLiveKeeper {
+    self.liveKeeper = [[LiveKeeper alloc] initWithURL:[NSURL URLWithString:self.pushURL]];
+
+    [self.liveKeeper.recoverTimeout subscribeNext:^(id x) {
+        [self updateStatusText:@"Recover timeout"];
+    }];
+    
+    [self.liveKeeper.shoultRecover subscribeNext:^(id x) {
+        [self updateStatusText:@"Recovering"];
+        self.liveKeeper.recoving = YES;
+        [self.liveSession endRtmpSession];
+        [self.liveSession startRtmpSessionWithURL:self.pushURL andStreamKey:self.streamName];
+    }];
+    
+    [self.liveKeeper.recoverToomuch subscribeNext:^(id x) {
+        [self updateStatusText:@"Recover failed"];        
+    }];
+}
+
 - (void)setupSession {
     CGSize videoSize = [UIScreen mainScreen].bounds.size;
     
@@ -56,7 +79,8 @@
                                                           bitrate:1000 * 1000
                                           useInterfaceOrientation:YES
                                                       cameraState:VCCameraStateFront];
-    [self.view addSubview:self.liveSession.previewView];
+    self.liveSession.delegate = self;
+    [self.view insertSubview:self.liveSession.previewView atIndex:0];
     [self.liveSession.previewView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
@@ -77,18 +101,52 @@
         self.liveSession.useAdaptiveBitrate = NO;
     }
     else {
+        self.liveSession.bitrate = 1000 * 1000;
         self.liveSession.useAdaptiveBitrate = YES;
     }
+    self.liveKeeper.userStartedLive = YES;
     [self.liveSession startRtmpSessionWithURL:self.pushURL andStreamKey:self.streamName];
 }
 
 - (void)stopPushVideo {
+    self.liveKeeper.userStartedLive = NO;
     [self.liveSession endRtmpSession];
 }
 
+- (void)updateStatusText:(NSString *)text {
+    self.liveStatusLabel.text = [NSString stringWithFormat:@"RTMP Status:%@", text];
+
+}
 #pragma mark - Video session
 - (void)connectionStatusChanged:(VCSessionState) state {
-    NSLog(@"connectionStatusChanged:%@", @(state));
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *stateText = @"";
+        switch (state) {
+            case VCSessionStatePreviewStarted:
+                stateText = @"Preview";
+                break;
+            case VCSessionStateStarting:
+                stateText = @"Starting";
+                break;
+            case VCSessionStateStarted:
+                stateText = @"Started";
+                self.liveKeeper.recoving = NO;
+                self.liveKeeper.pushBroken = NO;
+                break;
+            case VCSessionStateEnded:
+                stateText = @"Ended";
+                self.liveKeeper.pushBroken = YES;
+                break;
+            case VCSessionStateError:
+                stateText = @"Error";
+                self.liveKeeper.pushBroken = YES;
+                break;
+            default:
+                stateText = @"Unknown";
+                break;
+        }
+        [self updateStatusText:stateText];
+    });
 }
 
 #pragma mark CameraSource delegate

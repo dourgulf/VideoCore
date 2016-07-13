@@ -10,6 +10,8 @@
 		60377265B653243BEDEFCB17 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64DE33CFB5FF52E62FC7231E /* libPods.a */; };
 		D04626631D2BB2FA0042745B /* LivingVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D04626621D2BB2FA0042745B /* LivingVC.m */; };
 		D04626661D2BB5190042745B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D04626641D2BB5190042745B /* Main.storyboard */; };
+		D07E0CC11D36146D00386A7D /* LiveKeeper.m in Sources */ = {isa = PBXBuildFile; fileRef = D07E0CC01D36146D00386A7D /* LiveKeeper.m */; };
+		D07E0CC61D36180500386A7D /* YYTextWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D07E0CC51D36180500386A7D /* YYTextWeakProxy.m */; };
 		D090E6E51D1E61DD0006AB52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6E41D1E61DD0006AB52 /* main.m */; };
 		D090E6E81D1E61DD0006AB52 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6E71D1E61DD0006AB52 /* AppDelegate.m */; };
 		D090E6EB1D1E61DD0006AB52 /* PrepareLiveVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D090E6EA1D1E61DD0006AB52 /* PrepareLiveVC.m */; };
@@ -24,6 +26,10 @@
 		D04626611D2BB2FA0042745B /* LivingVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LivingVC.h; sourceTree = "<group>"; };
 		D04626621D2BB2FA0042745B /* LivingVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LivingVC.m; sourceTree = "<group>"; };
 		D04626651D2BB5190042745B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D07E0CBF1D36146D00386A7D /* LiveKeeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveKeeper.h; sourceTree = "<group>"; };
+		D07E0CC01D36146D00386A7D /* LiveKeeper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveKeeper.m; sourceTree = "<group>"; };
+		D07E0CC41D36180500386A7D /* YYTextWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYTextWeakProxy.h; sourceTree = "<group>"; };
+		D07E0CC51D36180500386A7D /* YYTextWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYTextWeakProxy.m; sourceTree = "<group>"; };
 		D090E6E01D1E61DD0006AB52 /* SampleBroadcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleBroadcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D090E6E41D1E61DD0006AB52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D090E6E61D1E61DD0006AB52 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -64,6 +70,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D07E0CC21D3617F800386A7D /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				D07E0CC31D36180500386A7D /* YYKit */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		D07E0CC31D36180500386A7D /* YYKit */ = {
+			isa = PBXGroup;
+			children = (
+				D07E0CC41D36180500386A7D /* YYTextWeakProxy.h */,
+				D07E0CC51D36180500386A7D /* YYTextWeakProxy.m */,
+			);
+			path = YYKit;
+			sourceTree = "<group>";
+		};
 		D090E6D71D1E61DD0006AB52 = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +108,7 @@
 		D090E6E21D1E61DD0006AB52 /* SampleBroadcaster */ = {
 			isa = PBXGroup;
 			children = (
+				D07E0CC21D3617F800386A7D /* Vendor */,
 				D04626641D2BB5190042745B /* Main.storyboard */,
 				D090E6E61D1E61DD0006AB52 /* AppDelegate.h */,
 				D090E6E71D1E61DD0006AB52 /* AppDelegate.m */,
@@ -92,6 +116,8 @@
 				D090E6EA1D1E61DD0006AB52 /* PrepareLiveVC.m */,
 				D04626611D2BB2FA0042745B /* LivingVC.h */,
 				D04626621D2BB2FA0042745B /* LivingVC.m */,
+				D07E0CBF1D36146D00386A7D /* LiveKeeper.h */,
+				D07E0CC01D36146D00386A7D /* LiveKeeper.m */,
 				D090E6EF1D1E61DD0006AB52 /* Assets.xcassets */,
 				D090E6F11D1E61DD0006AB52 /* LaunchScreen.storyboard */,
 				D090E6F41D1E61DD0006AB52 /* Info.plist */,
@@ -234,6 +260,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D07E0CC11D36146D00386A7D /* LiveKeeper.m in Sources */,
+				D07E0CC61D36180500386A7D /* YYTextWeakProxy.m in Sources */,
 				D090E6EB1D1E61DD0006AB52 /* PrepareLiveVC.m in Sources */,
 				D090E6E81D1E61DD0006AB52 /* AppDelegate.m in Sources */,
 				D04626631D2BB2FA0042745B /* LivingVC.m in Sources */,
