@@ -83,6 +83,10 @@ namespace videocore
         // use stream key as the total pay path.
         m_playPath = streamKey;
         
+        if (m_uri.search.size() > 0) {
+            m_playPath += "?";
+            m_playPath += m_uri.search;
+        }
         connectServer();
     }
     RTMPSession::~RTMPSession()
