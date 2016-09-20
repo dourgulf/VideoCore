@@ -199,7 +199,7 @@
 {
     
     if(_paused) {
-        NSLog(@"Paused, dont draw");
+        NSLog(@"Paused, drawFrame");
         return ;
     }
     
@@ -225,7 +225,7 @@
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if(_paused) {
-            NSLog(@"Paused, dont draw");
+            NSLog(@"Paused, drawFrame main queue");
             return ;
         }
 

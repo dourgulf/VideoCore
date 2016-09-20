@@ -722,14 +722,12 @@ namespace videocore { namespace simpleApi {
             case VCFilterGlow:
                 filterName = @"com.videocore.filters.glow";
                 break;
-                
             case VCFilterBeauty:
                 filterName = @"com.videocore.filters.beauty";
                 break;
             case VCFilterAntique:
                 filterName = @"com.videocore.filters.antique";
                 break;
-                
             default:
                 break;
         }
@@ -817,10 +815,14 @@ namespace videocore { namespace simpleApi {
             m_cameraSource->setContinuousAutofocus(true);
             m_cameraSource->setContinuousExposure(true);
 
-            m_videoMixer->setSourceFilter(m_cameraSource, dynamic_cast<videocore::IVideoFilter*>(m_videoMixer->filterFactory().filter("com.videocore.filters.bgra")));
-            _filter = VCFilterNormal;
+//            m_videoMixer->setSourceFilter(m_cameraSource, dynamic_cast<videocore::IVideoFilter*>(m_videoMixer->filterFactory().filter("com.videocore.filters.bgra")));
+//            _filter = VCFilterNormal;
+            // 默认开启美颜
+            m_videoMixer->setSourceFilter(m_cameraSource, dynamic_cast<videocore::IVideoFilter*>(m_videoMixer->filterFactory().filter("com.videocore.filters.beauty")));
+            _filter = VCFilterBeauty;
 
             m_cameraSource->setOutput(m_videoMixer);
+            
             // Inform delegate that camera source has been added
             if ([_delegate respondsToSelector:@selector(didAddCameraSource:)]) {
                 [_delegate didAddCameraSource:self];

@@ -6,6 +6,7 @@
 #include <videocore/filters/Basic/FisheyeVideoFilter.h>
 #include <videocore/filters/Basic/GlowVideoFilter.h>
 #include <videocore/filters/Basic/BeautyVideoFilter.hpp>
+#include <videocore/filters/Basic/AntiqueVideoFilter.hpp>
 
 namespace videocore {
     std::map<std::string, InstantiateFilter>* FilterFactory::s_registration = nullptr ;
@@ -17,8 +18,9 @@ namespace videocore {
             filters::InvertColorsVideoFilter i;
             filters::SepiaVideoFilter s;
             filters::FisheyeVideoFilter f;
-            filters::BeautyVideoFilter beauty;
             filters::GlowVideoFilter gl;
+            filters::AntiqueVideoFilter antique;
+            filters::BeautyVideoFilter beauty;
         }
     }
     IFilter*
