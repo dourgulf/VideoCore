@@ -10,6 +10,12 @@ BTW: There are some Chinese company using VideoCore(like Baidu and Tencent), but
 For more dicuss, join my QQ group:1360583
 
 ---
+About compile error after Pods:
+1. fatal error: 'type_half.inl' file not found :
+    a) select Pods project's in workspace, and select "VideoCore" target
+    b) locate "Header Search Paths" setting items
+    c) remove two item in this setting: ${PODS_ROOT}/Headers/Private" and "${PODS_ROOT}/Headers/Private/VideoCore"
+---
 #VideoCore
 VideoCore is a project inteded to be an audio and video manipulation and streaming graph.  It currently works with iOS.
 
